@@ -1,31 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
+import * as actions from "../../store/modules/auth/actions";
 import { useDispatch } from "react-redux";
 
 import { Container } from "../../styles/GlobalStyles";
-import { Title, Paragraph } from "./styled";
-import * as exampleActions from "../../store/modules/example/actions";
+import { Form } from "./styled";
+import { toast } from "react-toastify";
+import isEmail from "validator/lib/isEmail";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const dispatch = useDispatch();
 
-  function handleClick(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    toast.dismiss();
 
-    dispatch(exampleActions.requestButton());
-  }
+    let formErrors = false;
+
+    if (!isEmail(email)) {
+      formErrors = true;
+      toast.error("Email inválido");
+    }
+
+    if (password.length < 3 || password.length > 30) {
+      formErrors = true;
+      toast.error("Senha inválida");
+    }
+
+    if (formErrors) return;
+
+    dispatch(actions.requestLogin({ email, password }));
+  };
 
   return (
     <Container>
-      <Title>
-        Login
-        <span>Only for testing purpose</span>
-      </Title>
-      <Paragraph>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque
-        habitant morbi tristique senectus et netus et malesuada fames ac turpis
-        egestas.
-      </Paragraph>
-      <button onClick={handleClick}>Enviar</button>
+      <h1>Login</h1>
+      <Form onSubmit={handleSubmit}>
+        <label htmlFor="email">
+          Email{" "}
+          <input
+            type="email"
+            placeholder="Digite seu email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </label>
+        <label htmlFor="password">
+          Senha{" "}
+          <input
+            type="password"
+            placeholder="Digite sua senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+        <button type="submit">Entrar</button>
+      </Form>
     </Container>
   );
 }
