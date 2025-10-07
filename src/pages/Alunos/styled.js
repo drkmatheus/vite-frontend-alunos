@@ -1,15 +1,24 @@
 import styled from "styled-components";
 
-export const Title = styled.h1`
-  color: #666;
+export const AlunosContainer = styled.div`
+  margin-top: 2rem;
 
-  span {
-    font-size: 10px;
+  div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+  }
+
+  div + div {
+    border-top: 1px solid #eee;
   }
 `;
 
-export const Paragraph = styled.p`
-  text-align: center;
-  padding: 1rem;
-  margin: 0 auto;
+export const ProfilePic = styled.div`
+  img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+  }
 `;

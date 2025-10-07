@@ -12,6 +12,8 @@
   "dependencies": {
     "axios": "^1.12.2",
     "history": "^4.10.1",
+    "loadash": "^1.0.0",
+    "lodash": "^4.17.21",
     "prop-types": "^15.8.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
