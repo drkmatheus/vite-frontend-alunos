@@ -18,3 +18,10 @@ export function failureLogin(payload) {
     payload,
   };
 }
+
+export function requestRegister(payload) {
+  return {
+    type: actionType.REGISTER_REQUEST,
+    payload,
+  };
+}
