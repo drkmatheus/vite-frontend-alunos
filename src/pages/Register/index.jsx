@@ -6,12 +6,15 @@ import history from "../../services/history";
 import { get } from "lodash";
 
 import { Container } from "../../styles/GlobalStyles";
+import Loading from "../../components/Loading";
 import { Form } from "./styled";
 
 export default function Register() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(e) {
     toast.dismiss();
@@ -33,20 +36,24 @@ export default function Register() {
 
     if (formErrors) return;
 
+    setIsLoading(true);
+
     try {
       await axios.post("/users/", { nome, email, password });
       toast.success("Cadastro realizado");
+      setIsLoading(false);
       history.push("/login");
     } catch (e) {
       const errors = get(e, "response.data.errors", []);
 
       errors.map((error) => toast.error(error));
+      setIsLoading(false);
     }
   }
 
   return (
     <Container>
-      <h1>Criar conta</h1>
+      <Loading isLoading={isLoading} />;<h1>Criar conta</h1>
       <Form onSubmit={handleSubmit}>
         <label htmlFor="nome">
           Nome{" "}

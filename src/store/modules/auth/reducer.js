@@ -10,8 +10,9 @@ const initialState = {
 export default function exampleReducer(state = initialState, action) {
   switch (action.type) {
     case types.LOGIN_REQUEST: {
-      console.log("REDUCER", action.payload);
-      return state;
+      const newState = { ...state };
+      newState.isLoading = true;
+      return newState;
     }
 
     case types.LOGIN_FAILURE: {
@@ -25,6 +26,7 @@ export default function exampleReducer(state = initialState, action) {
       newState.isLogged = true;
       newState.token = action.payload.tokenJwt;
       newState.user = action.payload.user;
+      newState.isLoading = false;
 
       return newState;
     }
