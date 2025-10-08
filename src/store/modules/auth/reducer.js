@@ -1,7 +1,7 @@
 import * as types from "../types";
 
 const initialState = {
-  isLoggedIn: false,
+  isLogged: false,
   token: false,
   user: {},
   isLoading: false,
@@ -12,6 +12,21 @@ export default function exampleReducer(state = initialState, action) {
     case types.LOGIN_REQUEST: {
       console.log("REDUCER", action.payload);
       return state;
+    }
+
+    case types.LOGIN_FAILURE: {
+      const newState = { ...initialState };
+      return newState;
+    }
+
+    case types.LOGIN_SUCCESS: {
+      const newState = { ...state };
+
+      newState.isLogged = true;
+      newState.token = action.payload.tokenJwt;
+      newState.user = action.payload.user;
+
+      return newState;
     }
 
     default:
