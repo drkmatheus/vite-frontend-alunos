@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { get } from "lodash";
-import { FaUserCircle, FaEdit, FaWindowClose } from "react-icons/fa";
+import {
+  FaUserCircle,
+  FaEdit,
+  FaWindowClose,
+  FaExclamationCircle,
+} from "react-icons/fa";
 
 import { Container } from "../../styles/GlobalStyles";
 import Loading from "../../components/Loading";
 import { AlunosContainer, ProfilePic } from "./styled";
 import axios from "../../services/axios";
+import { toast } from "react-toastify";
 
 export default function Alunos() {
   const [alunos, setAlunos] = useState([]);
@@ -23,12 +29,44 @@ export default function Alunos() {
     getData();
   }, []);
 
+  const handlePreDelete = (e) => {
+    e.preventDefault();
+    const exclamation = e.currentTarget.nextSibling;
+    exclamation.setAttribute("display", "block");
+    e.currentTarget.remove();
+  };
+
+  const handleDelete = async (e, id, index) => {
+    e.persist();
+    try {
+      setIsLoading(true);
+      await axios.delete(`/alunos/${id}`);
+
+      const novosAlunos = [...alunos];
+      novosAlunos.splice(index, 1);
+      setAlunos(novosAlunos);
+
+      setIsLoading(false);
+    } catch (err) {
+      const status = get(err, "response.status", "");
+
+      if (status === 401) {
+        toast.error("Faça login para realizar essa ação");
+      } else {
+        toast.error("Erro inesperado");
+      }
+      console.log(err);
+      console.log("Resposta do servidor:", err.response);
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Container>
       <Loading isLoading={isLoading} />
       <h1>Alunos</h1>
       <AlunosContainer>
-        {alunos.map((aluno) => {
+        {alunos.map((aluno, index) => {
           return (
             <div key={aluno.id}>
               <ProfilePic>
@@ -43,9 +81,15 @@ export default function Alunos() {
               <Link to={`/aluno/${aluno.id}/edit`}>
                 <FaEdit size={16} />
               </Link>
-              <Link to={`/aluno/${aluno.id}/delete`}>
+              <Link to={`/aluno/${aluno.id}/delete`} onClick={handlePreDelete}>
                 <FaWindowClose size={16} />
               </Link>
+              <FaExclamationCircle
+                size={16}
+                display="none"
+                cursor="pointer"
+                onClick={(e) => handleDelete(e, aluno.id, index)}
+              />
             </div>
           );
         })}
