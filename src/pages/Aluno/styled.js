@@ -24,3 +24,33 @@ export const Form = styled.form`
     margin: 0.7rem 0 0 0;
   }
 `;
+
+export const ProfilePic = styled.div`
+  display: flex;
+
+  align-items: center;
+  padding: 0 0 20px;
+  position: relative;
+  margin-top: 1rem;
+
+  img {
+    width: 190px;
+    height: 190px;
+    border-radius: 5%;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    position: absolute;
+    bottom: 0;
+    color: #fff;
+    background: ${colors.primaryColor};
+    width: 36px;
+    height: 36px;
+    margin-left: 11rem;
+    border-radius: 50%;
+  }
+`;

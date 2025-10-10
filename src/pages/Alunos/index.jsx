@@ -71,7 +71,7 @@ export default function Alunos() {
           return (
             <div key={aluno.id}>
               <ProfilePic>
-                {get(aluno, "aluno.Pics[0].url", false) ? (
+                {get(aluno, "Pics[0].url", false) ? (
                   <img src={aluno.Pics[0].url} />
                 ) : (
                   <FaUserCircle size={36} />

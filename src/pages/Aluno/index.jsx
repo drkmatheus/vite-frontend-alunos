@@ -7,10 +7,12 @@ import Loading from "../../components/Loading";
 import { useDispatch } from "react-redux";
 
 import { Container } from "../../styles/GlobalStyles";
-import { Form } from "./styled";
+import { Form, ProfilePic } from "./styled";
 import axios from "../../services/axios";
 import history from "../../services/history";
 import * as actions from "../../store/modules/auth/actions";
+import { FaEdit, FaUserCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function Aluno({ match }) {
   const id = get(match, "params.id", null);
@@ -20,6 +22,7 @@ export default function Aluno({ match }) {
   const [idade, setIdade] = useState("");
   const [altura, setAltura] = useState("");
   const [peso, setPeso] = useState("");
+  const [pic, setPic] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
@@ -31,6 +34,8 @@ export default function Aluno({ match }) {
         setIsLoading(true);
         const { data } = await axios.get(`/alunos/${id}`);
         const pic = get(data, "Pics[0].url", "");
+
+        setPic(pic);
 
         setNome(data.nome);
         setSobrenome(data.sobrenome);
@@ -133,6 +138,14 @@ export default function Aluno({ match }) {
     <Container>
       <Loading isLoading={isLoading} />
       <h1>{id ? "Editar aluno" : "Novo aluno"}</h1>
+      {id && (
+        <ProfilePic>
+          {pic ? <img src={pic} alt={nome} /> : <FaUserCircle size={100} />}
+          <Link to={`/pics/${id}`}>
+            <FaEdit size={24} />
+          </Link>
+        </ProfilePic>
+      )}
       <Form onSubmit={handleSubmit}>
         <label htmlFor="nome">Nome do aluno</label>
         <input
