@@ -13,9 +13,11 @@ import Loading from "../../components/Loading";
 import { AlunosContainer, ProfilePic, NovoAluno } from "./styled";
 import axios from "../../services/axios";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 export default function Alunos() {
   const [alunos, setAlunos] = useState([]);
+  const isLoggedIn = useSelector((state) => state.auth.isLogged);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -38,6 +40,12 @@ export default function Alunos() {
 
   const handleDelete = async (e, id, index) => {
     e.persist();
+
+    if (!isLoggedIn) {
+      toast.error("Você precisa estar logado para excluir alunos");
+      return;
+    }
+
     try {
       setIsLoading(true);
       await axios.delete(`/alunos/${id}`);
