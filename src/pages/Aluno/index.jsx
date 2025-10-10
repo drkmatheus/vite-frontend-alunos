@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { get } from "lodash";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
-import { isEmail } from "validator";
+import { isEmail, isInt, isFloat } from "validator";
 import Loading from "../../components/Loading";
+import { useDispatch } from "react-redux";
 
 import { Container } from "../../styles/GlobalStyles";
 import { Form } from "./styled";
 import axios from "../../services/axios";
 import history from "../../services/history";
+import * as actions from "../../store/modules/auth/actions";
 
 export default function Aluno({ match }) {
   const id = get(match, "params.id", null);
@@ -19,6 +21,7 @@ export default function Aluno({ match }) {
   const [altura, setAltura] = useState("");
   const [peso, setPeso] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!id) return;
@@ -47,19 +50,9 @@ export default function Aluno({ match }) {
       }
     }
     getData();
-  }, []);
+  }, [id]);
 
-  const isNumeric = (value) => {
-    return /^\d+$/.test(value);
-  };
-
-  const handleNumericInput = (value, setter) => {
-    if (value === "" || isNumeric(value)) {
-      setter(value);
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let formErrors = false;
 
@@ -78,23 +71,61 @@ export default function Aluno({ match }) {
       formErrors = true;
     }
 
-    if (!idade || isNumeric(idade)) {
+    if (!isInt(String(idade))) {
       toast.error("Idade inválida");
       formErrors = true;
     }
 
-    if (!altura || isNumeric(altura)) {
+    if (!isFloat(String(altura))) {
       toast.error("Altura inválida");
       formErrors = true;
     }
 
-    if (!peso || isNumeric(peso)) {
+    if (!isFloat(String(peso))) {
       toast.error("Peso inválido");
       formErrors = true;
     }
 
-    if (!formErrors) {
-      toast.success("Formulário salvo");
+    if (formErrors) return;
+
+    try {
+      setIsLoading(true);
+      if (id) {
+        await axios.put(`/alunos/${id}`, {
+          nome,
+          sobrenome,
+          email,
+          idade,
+          altura,
+          peso,
+        });
+        toast.success("Dados editados e salvos");
+        history.push("/");
+      } else {
+        await axios.post(`/alunos/`, {
+          nome,
+          sobrenome,
+          email,
+          idade,
+          altura,
+          peso,
+        });
+        toast.success("Dados salvos");
+        history.push("/");
+      }
+      setIsLoading(false);
+    } catch (err) {
+      const status = get(err, "response.status", "");
+      const data = get(err, "response.data", {});
+      const errors = get(data, "errors", []);
+
+      if (errors.length > 0) {
+        errors.map((error) => toast.error(error));
+      } else {
+        toast.error("Erro desconhecido");
+      }
+
+      if (status === 401) dispatch(actions.failureLogin);
     }
   };
 
@@ -129,10 +160,10 @@ export default function Aluno({ match }) {
 
         <label htmlFor="idade">Idade do aluno</label>
         <input
-          type="text"
+          type="number"
           value={idade}
           placeholder="Digite a idade do aluno"
-          onChange={(e) => handleNumericInput(e.target.value, setIdade)}
+          onChange={(e) => setIdade(e.target.value)}
         />
 
         <label htmlFor="altura">Altura do aluno</label>
@@ -140,7 +171,7 @@ export default function Aluno({ match }) {
           type="text"
           value={altura}
           placeholder="Digite a altura do aluno"
-          onChange={(e) => handleNumericInput(e.target.value, setAltura)}
+          onChange={(e) => setAltura(e.target.value)}
         />
 
         <label htmlFor="peso">Peso do aluno</label>
@@ -148,7 +179,7 @@ export default function Aluno({ match }) {
           type="text"
           value={peso}
           placeholder="Digite o peso do aluno"
-          onChange={(e) => handleNumericInput(e.target.value, setPeso)}
+          onChange={(e) => setPeso(e.target.value)}
         />
 
         <button type="submit">{id ? "Salvar" : "Criar"}</button>
