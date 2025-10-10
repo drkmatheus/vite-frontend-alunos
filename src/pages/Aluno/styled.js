@@ -1,15 +1,26 @@
 import styled from "styled-components";
+import * as colors from "../../config/colors";
 
-export const Title = styled.h1`
-  color: #666;
+export const Form = styled.form`
+  display: flex;
+  flex-direction: column;
 
-  span {
-    font-size: 10px;
+  label {
+    margin: 1rem 0;
   }
-`;
 
-export const Paragraph = styled.p`
-  text-align: center;
-  padding: 1rem;
-  margin: 0 auto;
+  input {
+    padding: 0.7rem 0.2rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 2px solid #ddd;
+  }
+
+  input:focus {
+    border: 2px solid ${colors.primaryColor};
+  }
+
+  button {
+    margin: 0.7rem 0 0 0;
+  }
 `;

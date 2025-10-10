@@ -1,4 +1,5 @@
 import * as types from "../types";
+import axios from "../../../services/axios";
 
 const initialState = {
   isLogged: false,
@@ -16,6 +17,7 @@ export default function exampleReducer(state = initialState, action) {
     }
 
     case types.LOGIN_FAILURE: {
+      delete axios.defaults.headers.Authentication;
       const newState = { ...initialState };
       return newState;
     }

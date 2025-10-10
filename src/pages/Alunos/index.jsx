@@ -10,7 +10,7 @@ import {
 
 import { Container } from "../../styles/GlobalStyles";
 import Loading from "../../components/Loading";
-import { AlunosContainer, ProfilePic } from "./styled";
+import { AlunosContainer, ProfilePic, NovoAluno } from "./styled";
 import axios from "../../services/axios";
 import { toast } from "react-toastify";
 
@@ -65,6 +65,7 @@ export default function Alunos() {
     <Container>
       <Loading isLoading={isLoading} />
       <h1>Alunos</h1>
+      <NovoAluno to="/aluno/">Novo aluno</NovoAluno>
       <AlunosContainer>
         {alunos.map((aluno, index) => {
           return (
